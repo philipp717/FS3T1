@@ -1,32 +1,31 @@
 package com.example.fs3t1.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "servicios")
+@Table(name = "usuarios")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Producto {
+public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_servicio")
+    @Column(name = "id_usuario")
     private Long id;
 
     @Column(nullable = false)
     private String nombre;
 
-    @Column
-    private String descripcion;
+    @Column(nullable = false, unique = true)
+    private String email;
 
     @Column(nullable = false)
-    private Integer precio;
+    private String password;
 
-    /** Duración en minutos */
     @Column(nullable = false)
-    private Integer duracion;
+    private String rol = "USUARIO"; // ADMIN, USUARIO
 }

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito - HorasPro</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-brand">
+            <span class="brand-icon">⚡</span> HorasPro
+        </a>
+        <div class="nav-right">
+            <a href="/carrito" class="cart-btn active" th:unless="${session.usuarioRol == 'ADMIN'}">
+                🛒 <span class="cart-badge" th:text="${carritoCount}">0</span>
+            </a>
+            <a href="/admin" class="btn-nav btn-nav-admin" th:if="${session.usuarioRol == 'ADMIN'}">⚙️ Panel Admin</a>
+            <a href="/mi-cuenta" class="btn-nav btn-nav-user" th:if="${session.usuarioId != null and session.usuarioRol != 'ADMIN'}">👤 <span th:text="${session.usuarioNombre}">Mi cuenta</span></a>
+            <a href="/login" class="btn-nav btn-nav-login" th:if="${session.usuarioId == null}">Iniciar sesión</a>
+            <a href="/logout" class="btn-nav btn-nav-logout" th:if="${session.usuarioId != null}">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <div class="page-header">
+        <h1>Tu Carrito</h1>
+        <a href="/" class="btn-outline">← Seguir comprando</a>
+    </div>
+
+    <div th:if="${#lists.isEmpty(items)}" class="empty-cart">
+        <div class="empty-icon">🛒</div>
+        <h3>Tu carrito está vacío</h3>
+        <p>Agrega servicios para comenzar</p>
+        <a href="/" class="btn-primary">Ver servicios</a>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(items)}" class="cart-layout">
+        <div class="cart-items-section">
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Servicio</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item : ${items}">
+                        <td>
+                            <div class="cart-item-name" th:text="${item.nombre}">Servicio</div>
+                            <div class="cart-item-duration" th:text="${item.duracion + ' min'}">60 min</div>
+                        </td>
+                        <td th:text="${'$' + #numbers.formatInteger(item.precio, 0, 'POINT')}">$0</td>
+                        <td>
+                            <span class="qty-badge" th:text="${item.cantidad}">1</span>
+                        </td>
+                        <td class="subtotal" th:text="${'$' + #numbers.formatInteger(item.subtotal, 0, 'POINT')}">$0</td>
+                        <td>
+                            <form th:action="@{/carrito/eliminar/{id}(id=${item.productoId})}" method="post">
+                                <button type="submit" class="btn-remove">✕</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="cart-actions">
+                <form action="/carrito/vaciar" method="post">
+                    <button type="submit" class="btn-outline-danger">Vaciar carrito</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="cart-summary">
+            <h3 class="summary-title">Resumen del pedido</h3>
+            <div class="summary-rows">
+                <div class="summary-row" th:each="item : ${items}">
+                    <span th:text="${item.nombre + ' x' + item.cantidad}">Servicio</span>
+                    <span th:text="${'$' + #numbers.formatInteger(item.subtotal, 0, 'POINT')}">$0</span>
+                </div>
+            </div>
+            <div class="summary-total">
+                <span>Total</span>
+                <span class="total-amount" th:text="${'$' + #numbers.formatInteger(total, 0, 'POINT')}">$0</span>
+            </div>
+            <a href="/checkout" class="btn-primary btn-full">Proceder al pago →</a>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>© 2026 HorasPro · Todos los derechos reservados</p>
+</footer>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

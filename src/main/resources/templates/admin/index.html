@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - HorasPro</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-brand">
+            <span class="brand-icon">⚡</span> HorasPro
+        </a>
+        <div class="nav-right">
+            <a href="/admin" class="btn-nav btn-nav-admin active">⚙️ Dashboard</a>
+            <a href="/admin/servicios" class="btn-nav btn-nav-user">📦 Servicios</a>
+            <a href="/logout" class="btn-nav btn-nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <div class="page-header">
+        <h2>Panel de Administración</h2>
+        <p class="page-subtitle">Gestión de compras y servicios</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="admin-stats">
+        <div class="stat-card">
+            <div class="stat-value" th:text="${totalOrdenes}">0</div>
+            <div class="stat-label">Total órdenes</div>
+        </div>
+        <div class="stat-card stat-card-success">
+            <div class="stat-value" th:text="${ordenesPagadas}">0</div>
+            <div class="stat-label">Órdenes pagadas</div>
+        </div>
+        <div class="stat-card stat-card-accent">
+            <div class="stat-value" th:text="${'$' + #numbers.formatInteger(totalFacturado, 0, 'POINT')}">$0</div>
+            <div class="stat-label">Total facturado</div>
+        </div>
+    </div>
+
+    <!-- Orders table -->
+    <div class="admin-section">
+        <h3 class="section-title-sm">Todas las compras</h3>
+
+        <div th:if="${ordenes.isEmpty()}" class="empty-state">
+            <p>No hay órdenes registradas aún.</p>
+        </div>
+
+        <div class="admin-table-wrapper" th:unless="${ordenes.isEmpty()}">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Usuario</th>
+                        <th>Servicios</th>
+                        <th>Método</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="orden : ${ordenes}">
+                        <td class="text-muted" th:text="${orden.id}">1</td>
+                        <td>
+                            <span th:if="${orden.idUsuario != null}" th:text="${usuarios[orden.idUsuario] ?: 'Usuario desconocido'}">Usuario</span>
+                            <span th:if="${orden.idUsuario == null}" class="text-muted">Invitado</span>
+                        </td>
+                        <td>
+                            <div th:each="item : ${orden.items}" class="table-item-row">
+                                <span th:text="${item.producto.nombre}">Servicio</span>
+                                <span class="text-muted" th:if="${item.cantidad > 1}" th:text="${' ×' + item.cantidad}"> ×1</span>
+                            </div>
+                        </td>
+                        <td><span class="badge-metodo" th:text="${orden.metodoPago}">MP</span></td>
+                        <td>
+                            <span class="badge-estado"
+                                  th:classappend="${orden.estado == 'PAGADA' ? ' badge-success' : (orden.estado == 'FALLIDA' ? ' badge-danger' : ' badge-pending')}"
+                                  th:text="${orden.estado}">PENDIENTE</span>
+                        </td>
+                        <td class="text-muted text-sm" th:text="${#temporals.format(orden.fecha, 'dd/MM/yy HH:mm')}">01/01/26</td>
+                        <td class="text-accent font-bold" th:text="${'$' + #numbers.formatInteger(orden.total, 0, 'POINT')}">$0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>© 2026 HorasPro · Panel de Administración</p>
+</footer>
+</body>
+</html>

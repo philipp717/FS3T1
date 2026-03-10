@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Servicios - HorasPro</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-brand">
+            <span class="brand-icon">⚡</span> HorasPro
+        </a>
+        <div class="nav-right">
+            <a href="/admin" class="btn-nav btn-nav-admin">⚙️ Dashboard</a>
+            <a href="/admin/servicios" class="btn-nav btn-nav-user active">📦 Servicios</a>
+            <a href="/logout" class="btn-nav btn-nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <div class="page-header">
+        <h2>Gestionar Servicios</h2>
+        <p class="page-subtitle">Agrega o elimina los servicios disponibles</p>
+    </div>
+
+    <div th:if="${exito}" class="alert alert-success" th:text="${exito}"></div>
+
+    <div class="admin-layout">
+
+        <!-- Form: new service -->
+        <div class="admin-form-card">
+            <h3 class="section-title-sm">➕ Agregar servicio</h3>
+            <form action="/admin/servicios/nuevo" method="post" class="admin-form">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" name="nombre" placeholder="Ej: Taller de Docker" required class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea name="descripcion" placeholder="Descripción del servicio..." rows="3" class="form-input"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Precio ($)</label>
+                        <input type="number" name="precio" placeholder="15000" required min="1000" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Duración (min)</label>
+                        <input type="number" name="duracion" placeholder="60" required min="15" class="form-input">
+                    </div>
+                </div>
+                <button type="submit" class="btn-auth">Crear servicio</button>
+            </form>
+        </div>
+
+        <!-- Services list -->
+        <div class="admin-list-card">
+            <h3 class="section-title-sm">📋 Servicios actuales (<span th:text="${servicios.size()}">0</span>)</h3>
+
+            <div th:if="${servicios.isEmpty()}" class="empty-state">
+                <p>No hay servicios. ¡Agrega el primero!</p>
+            </div>
+
+            <div th:each="s : ${servicios}" class="service-row">
+                <div class="service-row-info">
+                    <div class="service-row-name" th:text="${s.nombre}">Servicio</div>
+                    <div class="service-row-meta text-muted">
+                        <span class="text-accent" th:text="${'$' + #numbers.formatInteger(s.precio, 0, 'POINT')}">$0</span>
+                        · <span th:text="${s.duracion + ' min'}">60 min</span>
+                    </div>
+                    <div class="service-row-desc text-muted text-sm" th:if="${s.descripcion}" th:text="${s.descripcion}"></div>
+                </div>
+                <form th:action="@{/admin/servicios/eliminar/{id}(id=${s.id})}" method="post"
+                      onsubmit="return confirm('¿Eliminar este servicio?')">
+                    <button type="submit" class="btn-danger-sm">Eliminar</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer class="footer">
+    <p>© 2026 HorasPro · Panel de Administración</p>
+</footer>
+</body>
+</html>

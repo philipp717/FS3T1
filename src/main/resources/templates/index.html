@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HorasPro - Servicios Profesionales</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-brand">
+            <span class="brand-icon">⚡</span> HorasPro
+        </a>
+        <div class="nav-right">
+            <a href="/carrito" class="cart-btn" th:unless="${session.usuarioRol == 'ADMIN'}">
+                🛒 <span class="cart-badge" th:text="${carritoCount}">0</span>
+            </a>
+            <a href="/admin" class="btn-nav btn-nav-admin" th:if="${session.usuarioRol == 'ADMIN'}">⚙️ Panel Admin</a>
+            <a href="/mi-cuenta" class="btn-nav btn-nav-user" th:if="${session.usuarioId != null and session.usuarioRol != 'ADMIN'}">👤 <span th:text="${session.usuarioNombre}">Mi cuenta</span></a>
+            <a href="/login" class="btn-nav btn-nav-login" th:if="${session.usuarioId == null}">Iniciar sesión</a>
+            <a href="/logout" class="btn-nav btn-nav-logout" th:if="${session.usuarioId != null}">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<header class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Horas Profesionales <span class="highlight">a tu medida</span></h1>
+        <p class="hero-subtitle">Agendar una sesión nunca fue tan fácil. Elige el servicio, paga y listo.</p>
+    </div>
+</header>
+
+<main class="container">
+    <section class="section">
+        <h2 class="section-title">Nuestros Servicios</h2>
+        <p class="section-subtitle">Todos los servicios tienen una duración de 1 hora y se realizan vía videollamada.</p>
+
+        <div class="products-grid">
+            <div class="product-card" th:each="producto : ${productos}">
+                <div class="product-icon">
+                    <img th:if="${producto.nombre.toLowerCase().contains('java')}"
+                         th:src="@{/img/logoJava.png}" alt="Clase de Java" class="product-img product-img--contain"/>
+                    <img th:if="${producto.nombre.toLowerCase().contains('base') or producto.nombre.toLowerCase().contains('datos')}"
+                         th:src="@{/img/baseDatos.png}" alt="Asesoría base de datos" class="product-img product-img--cover"/>
+                    <img th:if="${producto.nombre.toLowerCase().contains('programacion') or producto.nombre.toLowerCase().contains('programación')}"
+                         th:src="@{/img/programar.jpg}" alt="Hora de programación" class="product-img product-img--cover"/>
+                    <span th:if="${!producto.nombre.toLowerCase().contains('java') and !producto.nombre.toLowerCase().contains('base') and !producto.nombre.toLowerCase().contains('datos') and !producto.nombre.toLowerCase().contains('programacion') and !producto.nombre.toLowerCase().contains('programación')}">📚</span>
+                </div>
+                <div class="product-body">
+                    <h3 class="product-name" th:text="${producto.nombre}">Nombre</h3>
+                    <p class="product-duration">
+                        <span class="duration-icon">🕐</span>
+                        <span th:text="${producto.duracion + ' min'}">60 min</span>
+                    </p>
+                    <div class="product-footer">
+                        <span class="product-price" th:text="${'$' + #numbers.formatInteger(producto.precio, 0, 'POINT')}">$0</span>
+                        <form th:action="@{/carrito/agregar/{id}(id=${producto.id})}" method="post">
+                            <button type="submit" class="btn-add">+ Agregar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="feature">
+            <span class="feature-icon">🔒</span>
+            <h4>Pago Seguro</h4>
+            <p>MercadoPago y Flow</p>
+        </div>
+        <div class="feature">
+            <span class="feature-icon">📅</span>
+            <h4>Horario Flexible</h4>
+            <p>Agenda cuando quieras</p>
+        </div>
+        <div class="feature">
+            <span class="feature-icon">🎯</span>
+            <h4>Expertos Certificados</h4>
+            <p>100% profesionales</p>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <p>© 2026 HorasPro · Todos los derechos reservados</p>
+</footer>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

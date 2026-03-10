@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Pago exitoso! - HorasPro</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-brand">
+            <span class="brand-icon">⚡</span> HorasPro
+        </a>
+        <div class="nav-right">
+            <a href="/carrito" class="cart-btn" th:unless="${session.usuarioRol == 'ADMIN'}">
+                🛒 <span class="cart-badge">0</span>
+            </a>
+            <a href="/mi-cuenta" class="btn-nav btn-nav-user" th:if="${session.usuarioId != null and session.usuarioRol != 'ADMIN'}">👤 <span th:text="${session.usuarioNombre}">Mi cuenta</span></a>
+            <a href="/login" class="btn-nav btn-nav-login" th:if="${session.usuarioId == null}">Iniciar sesión</a>
+            <a href="/logout" class="btn-nav btn-nav-logout" th:if="${session.usuarioId != null}">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <div class="result-page success-page">
+        <div class="result-icon success-icon">✅</div>
+        <h1 class="result-title">¡Pago realizado con éxito!</h1>
+        <p class="result-message">Tu reserva fue confirmada. Recibirás un correo con los detalles de tu sesión.</p>
+        <div class="result-actions">
+            <a href="/" class="btn-primary">Volver al inicio</a>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>© 2026 HorasPro · Todos los derechos reservados</p>
+</footer>
+</body>
+</html>

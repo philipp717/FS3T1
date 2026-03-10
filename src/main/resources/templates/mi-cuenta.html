@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Cuenta - HorasPro</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-brand">
+            <span class="brand-icon">⚡</span> HorasPro
+        </a>
+        <div class="nav-right">
+            <a href="/carrito" class="cart-btn">
+                🛒 <span class="cart-badge" th:text="${carritoCount}">0</span>
+            </a>
+            <a href="/mi-cuenta" class="btn-nav btn-nav-user active">👤 <span th:text="${session.usuarioNombre}">Mi cuenta</span></a>
+            <a href="/logout" class="btn-nav btn-nav-logout">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <div class="page-header">
+        <h2>Mi Cuenta</h2>
+        <p class="page-subtitle" th:text="${session.usuarioNombre}">Usuario</p>
+    </div>
+
+    <div class="cuenta-section">
+        <h3 class="section-title-sm">Historial de compras</h3>
+
+        <div th:if="${ordenes.isEmpty()}" class="empty-state">
+            <p>Aún no tienes compras registradas.</p>
+            <a href="/" class="btn-primary">Ver servicios</a>
+        </div>
+
+        <div th:each="orden : ${ordenes}" class="orden-card" th:unless="${ordenes.isEmpty()}">
+            <div class="orden-header">
+                <div class="orden-meta">
+                    <span class="orden-id">#<span th:text="${orden.id}">1</span></span>
+                    <span class="badge-metodo" th:text="${orden.metodoPago}">MP</span>
+                    <span class="badge-estado"
+                          th:classappend="${orden.estado == 'PAGADA' ? ' badge-success' : (orden.estado == 'FALLIDA' ? ' badge-danger' : ' badge-pending')}"
+                          th:text="${orden.estado}">PENDIENTE</span>
+                </div>
+                <div class="orden-total text-accent" th:text="${'$' + #numbers.formatInteger(orden.total, 0, 'POINT')}">$0</div>
+            </div>
+            <div class="orden-fecha text-muted" th:text="${#temporals.format(orden.fecha, 'dd/MM/yyyy HH:mm')}">01/01/2026</div>
+            <div class="orden-items">
+                <span th:each="item, i : ${orden.items}" class="orden-item-tag">
+                    <span th:text="${item.producto.nombre}">Servicio</span>
+                    <span class="item-qty" th:if="${item.cantidad > 1}" th:text="${'×' + item.cantidad}"> ×1</span>
+                </span>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>© 2026 HorasPro · Todos los derechos reservados</p>
+</footer>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

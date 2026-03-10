@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - HorasPro</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-brand">
+            <span class="brand-icon">⚡</span> HorasPro
+        </a>
+        <div class="nav-right">
+            <a href="/carrito" class="cart-btn" th:unless="${session.usuarioRol == 'ADMIN'}">
+                🛒 <span class="cart-badge" th:text="${carritoCount}">0</span>
+            </a>
+            <a href="/mi-cuenta" class="btn-nav btn-nav-user" th:if="${session.usuarioId != null and session.usuarioRol != 'ADMIN'}">👤 <span th:text="${session.usuarioNombre}">Mi cuenta</span></a>
+            <a href="/login" class="btn-nav btn-nav-login" th:if="${session.usuarioId == null}">Iniciar sesión</a>
+            <a href="/logout" class="btn-nav btn-nav-logout" th:if="${session.usuarioId != null}">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <div class="page-header">
+        <h1>Finalizar Compra</h1>
+        <a href="/carrito" class="btn-outline">← Volver al carrito</a>
+    </div>
+
+    <div th:if="${error}" class="alert-error" th:text="${error}"></div>
+
+    <div class="checkout-layout">
+        <div class="order-summary-box">
+            <h3 class="summary-title">Tu pedido</h3>
+            <div class="summary-rows">
+                <div class="summary-row" th:each="item : ${items}">
+                    <div>
+                        <div class="item-name" th:text="${item.nombre}">Servicio</div>
+                        <div class="item-meta" th:text="${item.duracion + ' min × ' + item.cantidad}">60 min × 1</div>
+                    </div>
+                    <span th:text="${'$' + #numbers.formatInteger(item.subtotal, 0, 'POINT')}">$0</span>
+                </div>
+            </div>
+            <div class="summary-total">
+                <span>Total a pagar</span>
+                <span class="total-amount" th:text="${'$' + #numbers.formatInteger(total, 0, 'POINT')}">$0</span>
+            </div>
+        </div>
+
+        <div class="payment-methods">
+            <h3 class="summary-title">Método de pago</h3>
+
+            <form action="/pago/mercadopago" method="post">
+                <button type="submit" class="payment-btn mercadopago-btn">
+                    <div class="payment-btn-content">
+                        <span class="payment-logo">💳</span>
+                        <div>
+                            <div class="payment-name">MercadoPago</div>
+                            <div class="payment-desc">Tarjeta, débito, transferencia</div>
+                        </div>
+                        <span class="payment-arrow">→</span>
+                    </div>
+                </button>
+            </form>
+
+            <form action="/pago/flow" method="post">
+                <button type="submit" class="payment-btn flow-btn">
+                    <div class="payment-btn-content">
+                        <span class="payment-logo">🏦</span>
+                        <div>
+                            <div class="payment-name">Flow</div>
+                            <div class="payment-desc">Webpay, transferencia bancaria</div>
+                        </div>
+                        <span class="payment-arrow">→</span>
+                    </div>
+                </button>
+            </form>
+
+            <div class="secure-badge">
+                <span>🔒 Pago 100% seguro y encriptado</span>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>© 2026 HorasPro · Todos los derechos reservados</p>
+</footer>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>
