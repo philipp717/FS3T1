@@ -17,16 +17,16 @@ public class Producto {
     @Column(name = "id_servicio")
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String nombre;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String descripcion;
 
-    @Column(nullable = false)
+    @Column
     private Integer precio;
 
     /** Duración en minutos */
-    @Column(nullable = false)
+    @Column
     private Integer duracion;
 }

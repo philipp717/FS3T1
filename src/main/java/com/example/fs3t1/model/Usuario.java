@@ -17,15 +17,15 @@ public class Usuario {
     @Column(name = "id_usuario")
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String nombre;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "VARCHAR(50) DEFAULT 'USUARIO'")
     private String rol = "USUARIO"; // ADMIN, USUARIO
 }

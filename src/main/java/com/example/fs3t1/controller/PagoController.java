@@ -7,20 +7,11 @@ import com.example.fs3t1.model.Producto;
 import com.example.fs3t1.repository.OrdenRepository;
 import com.example.fs3t1.repository.ProductoRepository;
 import com.example.fs3t1.service.CarritoService;
-import com.mercadopago.MercadoPagoConfig;
-import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
-import com.mercadopago.client.preference.PreferenceClient;
-import com.mercadopago.client.preference.PreferenceItemRequest;
-import com.mercadopago.client.preference.PreferenceRequest;
-import com.mercadopago.resources.preference.Preference;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -30,12 +21,6 @@ public class PagoController {
     private final CarritoService carritoService;
     private final OrdenRepository ordenRepository;
     private final ProductoRepository productoRepository;
-
-    @Value("${mercadopago.access-token}")
-    private String mercadoPagoToken;
-
-    @Value("${app.base-url}")
-    private String baseUrl;
 
     public PagoController(CarritoService carritoService,
                           OrdenRepository ordenRepository,
@@ -51,41 +36,11 @@ public class PagoController {
         if (items.isEmpty()) return "redirect:/carrito";
 
         try {
-            MercadoPagoConfig.setAccessToken(mercadoPagoToken);
-
             Orden orden = crearOrden(items, "MERCADOPAGO", (Long) session.getAttribute("usuarioId"));
-
-            List<PreferenceItemRequest> mpItems = new ArrayList<>();
-            for (CarritoItem item : items) {
-                mpItems.add(PreferenceItemRequest.builder()
-                        .title(item.getNombre())
-                        .quantity(item.getCantidad())
-                        .unitPrice(new BigDecimal(item.getPrecio()))
-                        .currencyId("CLP")
-                        .build());
-            }
-
-            PreferenceRequest request = PreferenceRequest.builder()
-                    .items(mpItems)
-                    .backUrls(PreferenceBackUrlsRequest.builder()
-                            .success(baseUrl + "/pago-exitoso?orden=" + orden.getId())
-                            .failure(baseUrl + "/pago-error")
-                            .pending(baseUrl + "/pago-error")
-                            .build())
-                    .autoReturn("approved")
-                    .build();
-
-            PreferenceClient client = new PreferenceClient();
-            Preference preference = client.create(request);
-
-            orden.setPreferenceId(preference.getId());
-            ordenRepository.save(orden);
-
             carritoService.vaciar(session);
-            return "redirect:" + preference.getInitPoint();
-
+            return "redirect:/pago-exitoso?orden=" + orden.getId() + "&metodo=mercadopago";
         } catch (Exception e) {
-            attrs.addFlashAttribute("error", "Error al conectar con MercadoPago: " + e.getMessage());
+            attrs.addFlashAttribute("error", "Error al procesar el pago: " + e.getMessage());
             return "redirect:/checkout";
         }
     }

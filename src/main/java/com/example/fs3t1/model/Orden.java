@@ -22,16 +22,16 @@ public class Orden {
     @Column(name = "id_usuario")
     private Long idUsuario;
 
-    @Column(nullable = false)
+    @Column
     private String estado; // PENDIENTE, PAGADA, FALLIDA
 
-    @Column(nullable = false)
+    @Column
     private Integer total;
 
     @Column(name = "metodo_pago")
     private String metodoPago; // MERCADOPAGO, FLOW
 
-    @Column(name = "fecha", nullable = false)
+    @Column(name = "fecha")
     private LocalDateTime fecha;
 
     @Column(name = "preference_id")
