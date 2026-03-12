@@ -8,49 +8,81 @@ Permite comprar horas profesionales de asesoría tecnológica (programación, ba
 
 ## Requisitos previos
 
+Antes de ejecutar el proyecto, asegúrate de tener instalado lo siguiente:
+
+- **Visual Studio Code** — [Descargar](https://code.visualstudio.com/)
+- **Extension Pack for Java** (VS Code) — incluye soporte para Java y Spring Boot
 - **Java JDK 21** — [Descargar](https://www.oracle.com/java/technologies/downloads/#java21)
-- **Maven** (incluido vía `mvnw`)
-- **XAMPP** (Apache + MySQL corriendo en el puerto 3306)
-- **Git**
+- **Maven** (incluido en el proyecto vía `mvnw`, no necesitas instalarlo)
+- **XAMPP** — [Descargar](https://www.apachefriends.org/) (para correr MySQL localmente)
+- **Git** — [Descargar](https://git-scm.com/)
 
 ---
 
-## Configuración de la base de datos
+## Pasos para ejecutar el proyecto en VS Code
 
-1. Abrir **phpMyAdmin** (`http://localhost/phpmyadmin`) o la consola MySQL
-2. Crear la base de datos:
+### Paso 1 — Clonar el repositorio
+
+Abre una terminal y ejecuta:
+
+```bash
+git clone https://github.com/philipp717/FS3T1.git
+```
+
+Luego abre la carpeta del proyecto en VS Code:
+- Ve a **File → Open Folder** y selecciona la carpeta `fs3t1`
+
+---
+
+### Paso 2 — Iniciar MySQL con XAMPP
+
+1. Abre el **XAMPP Control Panel**
+2. Haz clic en **Start** junto a **MySQL**
+3. Una vez iniciado, abre el navegador y ve a `http://localhost/phpmyadmin`
+4. Crea la base de datos ejecutando:
 
 ```sql
 CREATE DATABASE fs3t1;
 ```
 
-3. Importar el schema (o dejarlo vacío — Hibernate lo crea solo con `ddl-auto=update`)
-
-Los datos iniciales (servicios y usuarios) se cargan automáticamente desde `data.sql` al arrancar la app.
+> El schema de tablas y los datos iniciales se crean automáticamente al arrancar la aplicación.
 
 ---
 
-## Pasos para ejecutar el proyecto
+### Paso 3 — Verificar Java 21
 
-### 1. Clonar el repositorio
+Asegúrate de tener Java 21 configurado. Puedes verificarlo en la terminal integrada de VS Code (**Terminal → New Terminal**):
 
-```bash
-git clone https://github.com/philipp717/FS3T1.git
-cd FS3T1/fs3t1
+```powershell
+java -version
 ```
 
-### 2. Configurar JAVA_HOME (Windows PowerShell)
+Debe mostrar `java version "21.x.x"`. Si no, configura `JAVA_HOME`:
 
 ```powershell
 $env:JAVA_HOME = "C:\Program Files\Java\jdk-21.0.10"
 $env:PATH = "$env:JAVA_HOME\bin;$env:PATH"
 ```
 
-### 3. Ejecutar la aplicación
+---
+
+### Paso 4 — Ejecutar la aplicación
+
+En la terminal integrada de VS Code, desde la carpeta `fs3t1`:
 
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
+
+Espera hasta ver el mensaje:
+
+```
+Started fs3t1Application in X.XXX seconds
+```
+
+---
+
+### Paso 5 — Abrir en el navegador
 
 La aplicación estará disponible en: **http://localhost:8080**
 
